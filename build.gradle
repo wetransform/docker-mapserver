@@ -44,6 +44,7 @@ MAP
     "init=epsg:$globalCrs"
   END
 
+  EXTENT $config.globalExtent
 """
     config.outputFormats.each { name, settings ->
       mapFile.text += """
