@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+
+  mapserver:
+    image: wetransform/mapserver:7.4.2
+    ports:
+      - 8080:80
+    volumes:
+      - ./etc:/etc/mapserver
+      - ./data:/data

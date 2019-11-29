@@ -1,0 +1,177 @@
+import groovy.io.FileType
+
+def json = new groovy.json.JsonSlurper()
+def config = json.parse(file(project.hasProperty('configFile') ? project.getProperty('configFile') : 'config.json'))
+
+def dataDir = project.file('data')
+
+task('generate-tileindex') {
+  doLast {
+    dataDir.eachFileRecurse(FileType.DIRECTORIES) { dir ->
+      exec {
+        println "Generating tile index in ${dir.absolutePath}"
+        workingDir dir.parent
+        commandLine 'bash', '-c', "gdaltindex ${dir.name}.shp ${dir.name}/*.tif"
+      }
+    }
+  }
+}
+
+task('generate-mapfile') {
+  description "Generate a MAP file based on the configuration and the data"
+  group 'Mapserver'
+
+  doLast {
+    def debugLevel = 5
+    def globalCrs = config.globalEpsg
+
+    def mapFile = project.file(project.hasProperty('targetMapFile') ? project.getProperty('targetMapFile') : 'etc/mapserver.map')
+    mapFile.text = """
+MAP
+  CONFIG "MS_ERRORFILE" "/tmp/ms_error.txt"
+  DEBUG $debugLevel
+
+  # all temp files get prefixed with this string
+  NAME mapserv
+  # background color of image if transparency (is not requested)
+  IMAGECOLOR 255 255 255
+  # default output image dimensions
+  SIZE 100000 100000
+  # always returns a map
+  STATUS ON
+  # set top level projection
+  PROJECTION
+    "init=epsg:$globalCrs"
+  END
+
+"""
+    config.outputFormats.each { name, settings ->
+      mapFile.text += """
+  OUTPUTFORMAT
+    NAME "$name"
+    DRIVER "$settings.driver"
+    MIMETYPE "$settings.mimetype"
+    IMAGEMODE "$settings.imagemode"
+    EXTENSION "$settings.extension"
+  END 
+"""
+    }
+
+    def svcMeta = config.serviceMetadata
+    def keywordList = svcMeta.keywords?.join(',')
+    def languages = svcMeta.languages?.join(',')
+    def org = svcMeta.contactOrganization
+
+    mapFile.text += """
+  WEB
+    METADATA
+      "wcs_enable_request"               "*"
+      "ows_enable_request"               "*"
+"""
+
+    def embeddedMetadata = svcMeta.embeddedMetadata
+    def linkedMetadata = svcMeta.linkedMetadata
+
+    if (!!embeddedMetadata == !!linkedMetadata) {
+      throw new GradleScriptException('Error in config.json: specify exactly one of "embeddedMetadata" and "linkedMetadata"', null)
+    }
+
+    if (embeddedMetadata) {
+      mapFile.text += """
+      "wcs_inspire_capabilities"         "embed"
+      "ows_inspire_temporal_reference"   "$embeddedMetadata.lastRevisionDate"
+      "ows_inspire_mpoc_name"            "$org.contactPerson"
+      "ows_inspire_mpoc_email"           "$org.contactPersonEmail"
+      "ows_inspire_metadatadate"         "$embeddedMetadata.metadataDate"
+      "ows_inspire_resourcelocator"      "$embeddedMetadata.resourceLocator"
+      "ows_inspire_keyword"              "infoCoverageAccessService"
+      "ows_inspire_dsid_ns"              "$embeddedMetadata.datasetIdentifierNamespace"
+"""
+    }
+    else {
+      mapFile.text += """    
+      "wcs_inspire_capabilities"         "url"
+      "ows_inspire_metadataurl_href"     "$linkedMetadata.href"
+      "ows_inspire_metadataurl_format"   "application/vnd.ogc.csw.capabilities.response_xml"      
+"""
+    }
+
+    mapFile.text += """
+      "ows_inspire_dsid_code"            "$svcMeta.datasetIdentifierCode"
+      "ows_title"                        "${svcMeta.title?:''}"
+      "ows_abstract"                     "${svcMeta.wcs_abstract?:''}"
+      "ows_languages"                    "$languages"
+      "ows_keywordlist"                  "${keywordList?:''}"
+      "ows_contactorganization"          "$org.name"
+      "ows_service_onlineresource"       "${org.onlineResource?:''}"
+      "ows_contactperson"                "${org.contactPerson?:''}"
+      "ows_contactelectronicmailaddress" "${org.contactPersonEmail?:''}"      
+      "ows_contactvoicetelephone"        "${org.contactPersonPhone?:''}"
+      "ows_contactfacsimiletelephone"    "${org.contactPersonFax?:''}"
+      "ows_contactposition"              "${org.contactPosition?:''}"
+      "ows_address"                      "${org.address?:''}"
+      "ows_city"                         "${org.city?:''}"
+      "ows_stateorprovince"              "${org.stateOrProvince?:''}"
+      "ows_postcode"                     "${org.postalCode?:''}"
+      "ows_country"                      "${org.country?:''}"
+      "ows_fees"                         "${svcMeta.fees?:''}"
+      "wcs_accessconstraints"            "${svcMeta.accessConstraints?:''}"
+      "ows_hoursofservice"               "${org.hoursOfService?:''}"
+      "ows_contactinstructions"          "${org.contactInstructions?:''}"
+      "ows_role"                         "${org.role?:''}"
+    END
+  END
+"""
+
+    dataDir.eachFileRecurse(FileType.DIRECTORIES) { dir ->
+      def layerConfigFile = file("/$dir/layerconfig.json")
+      if (!layerConfigFile.exists()) {
+        throw new GradleScriptException("Missing layerconfig.json for layer ${dir.name}.", null)
+      }
+      def layerConfig = json.parse(layerConfigFile)
+
+      def tileIndex = file("/$dir/../${dir.name}.shp")
+      if (!tileIndex.exists()) {
+        throw new GradleScriptException("Did not find tile index for ${dir.name}. Did you run the generate-tileindex task?" as String, null)
+      }
+
+      def supportedSrs = layerConfig.supportedSrs.join(' ')
+      def outputFormats = layerConfig.outputFormats.join(' ')
+
+      mapFile.text += """
+  LAYER
+    NAME "$dir.name"
+    STATUS ON
+    TYPE RASTER
+    DUMP TRUE
+    TILEINDEX "/data/${dir.name}.shp"
+    TILEITEM "LOCATION"
+    PROJECTION
+      "init=epsg:$layerConfig.layerEpsg"
+    END
+
+    METADATA
+      "wcs:CoverageId"     "$dir.name"
+      "wcs_enable_request" "GetCapabilities GetCoverage"
+      "wcs_label"          "$layerConfig.label"
+      "ows_srs"            "$supportedSrs"
+      "ows_extent"         "$layerConfig.extent"
+      "wcs_resolution"     "$layerConfig.resolution"
+      "wcs_bandcount"      "$layerConfig.bandCount"
+      "wcs_formats"        "$outputFormats"
+    END
+  END
+  
+"""
+    }
+
+    mapFile.text += """
+END
+"""
+
+  }
+}
+
+wrapper {
+  gradleVersion = '6.0.1'
+}

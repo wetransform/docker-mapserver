@@ -1,0 +1,10 @@
+{
+  "layerEpsg": "25832",
+  "extent": "437500 5467000 437650 5467150",
+  "label": "Rheinland-Pfalz DOP20",
+  "supportedSrs": ["EPSG:25832", "EPSG:4326"],
+  "resolution": "2 2",
+  "bandCount": "3",
+  "outputFormats": ["GEOTIFF_RGB"],
+  "nativeFormat": "image/tiff"
+}

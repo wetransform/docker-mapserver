@@ -1,0 +1,6 @@
+/config.json
+/data/*
+/etc/*
+/.gradle
+!.keep
+!*.example

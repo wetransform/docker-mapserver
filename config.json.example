@@ -1,0 +1,59 @@
+{
+  "globalEpsg": "25832",
+  "globalExtent": "282000 5265800 603300 5643400",
+  "outputFormats": {
+    "png": {
+      "driver": "GD/PNG",
+      "mimetype": "image/png",
+      "imagemode": "RGB",
+      "extension": "png"
+    },
+    "GEOTIFF_RGB": {
+      "driver": "GDAL/GTiff",
+      "mimetype": "image/tiff",
+      "imagemode": "RGB",
+      "extension": "tif"
+    },
+    "GEOTIFF_INT16": {
+      "driver": "GDAL/GTiff",
+      "mimetype": "image/tiff",
+      "imagemode": "INT16",
+      "extension": "tif"
+    }
+  },
+  "serviceMetadata": {
+    "datasetIdentifierCode": "wcsdemo",
+    "embeddedMetadata": {
+      "lastRevisionDate": "2019-11-27",
+      "metadataDate": "2019-11-28",
+      "resourceLocator": "https://mapserv-demo.wetransform.to/",
+      "datasetIdentifierNamespace": "https://mapserv-demo.wetransform.to"
+    },
+    "linkedMetadata_EXAMPLE": {
+      "href": "https://catalog.example.org/link/to/metadata"
+    },
+    "title": "WCS BW-RP-SL DOP+DGM",
+    "wcs_abstract": "Prototypische INSPIRE-Download-Umsetzung mit Mapserver",
+    "languages": ["ger"],
+    "keywords": ["WCS_BW_RP_SL_DOP_DGM","Geobasisdaten","AdV","AdV-OWS-Basisprofil","AdV-WCS-Profil 1.0.0","SERVICE","DOP","Digitale Orthophotos","DGM","Digitale Geländemodelle","SL","Saarland","RP","Rheinland-Pfalz","BW","Baden-Württemberg"],
+    "contactOrganization": {
+      "name": "wetransform GmbH",
+      "onlineResource": "https://www.wetransform.to",
+      "contactPerson": "Florian Esser",
+      "contactPosition": "Service Administrator",
+      "contactPersonEmail": "fe+adv@wetransform.to",
+      "contactPersonPhone": "+49 6151 9876543-1",
+      "contactPersonFax": "+49 6151 9876543-2",
+      "address": "Fraunhoferstr. 5",
+      "city": "Darmstadt",
+      "stateOrProvince": "Hessen",
+      "postalCode": "64283",
+      "country": "Deutschland",
+      "hoursOfService": "0900-1700",
+      "contactInstructions": "Do not contact - demo service",
+      "role": "pointOfContact"
+    },
+    "fees": "None",
+    "accessConstraints": "None"
+  }
+}
