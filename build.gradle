@@ -22,7 +22,7 @@ task('generate-mapfile') {
   group 'Mapserver'
 
   doLast {
-    def debugLevel = 5
+    def debugLevel = project.hasProperty('debugLevel') ? project.getProperty('debugLevel') : 5
     def globalCrs = config.globalEpsg
 
     def mapFile = project.file(project.hasProperty('targetMapFile') ? project.getProperty('targetMapFile') : 'etc/mapserver.map')
