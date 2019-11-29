@@ -160,6 +160,7 @@ MAP
       "wcs_resolution"     "$layerConfig.resolution"
       "wcs_bandcount"      "$layerConfig.bandCount"
       "wcs_formats"        "$outputFormats"
+      "wcs_native_format"  "$layerConfig.nativeFormat"
     END
   END
   
