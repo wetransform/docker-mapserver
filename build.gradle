@@ -6,6 +6,9 @@ def config = json.parse(file(project.hasProperty('configFile') ? project.getProp
 def dataDir = project.file('data')
 
 task('generate-tileindex') {
+  description "Generate tile index Shapefiles for all available layers"
+  group 'Mapserver'
+
   doLast {
     dataDir.eachFileRecurse(FileType.DIRECTORIES) { dir ->
       exec {
