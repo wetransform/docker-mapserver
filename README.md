@@ -141,6 +141,9 @@ Das Ableiten der MapServer-Konfigurationsdatei `etc/mapserver.map` erfolgt über
 Eigenschaften, die nicht im Rahmen der automatischen Ableitung aus der Basis- und Layer-
 Konfigurationsdateien gesetzt werden, können manuell editiert werden.
 
+Ein vollständiges Beispiel für eine generierte Konfigurationsdatei ist in der Datei
+`etc/mapserver.map.example` zu finden.
+
 ## Beispiel für Verzeichnisinhalte
 
 Eine Beispiel für einen Verzeichnisbaum, der alle notwendigen Ordner und Dateien für

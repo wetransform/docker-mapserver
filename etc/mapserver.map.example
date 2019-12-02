@@ -1,0 +1,229 @@
+
+MAP
+  CONFIG "MS_ERRORFILE" "/tmp/ms_error.txt"
+  DEBUG 5
+
+  # all temp files get prefixed with this string
+  NAME mapserv
+  # background color of image if transparency (is not requested)
+  IMAGECOLOR 255 255 255
+  # default output image dimensions
+  SIZE 100000 100000
+  # always returns a map
+  STATUS ON
+  # set top level projection
+  PROJECTION
+    "init=epsg:25832"
+  END
+
+  EXTENT 282000 5265800 603300 5643400
+
+  OUTPUTFORMAT
+    NAME "png"
+    DRIVER "GD/PNG"
+    MIMETYPE "image/png"
+    IMAGEMODE "RGB"
+    EXTENSION "png"
+  END 
+
+  OUTPUTFORMAT
+    NAME "GEOTIFF_RGB"
+    DRIVER "GDAL/GTiff"
+    MIMETYPE "image/tiff"
+    IMAGEMODE "RGB"
+    EXTENSION "tif"
+  END 
+
+  OUTPUTFORMAT
+    NAME "GEOTIFF_INT16"
+    DRIVER "GDAL/GTiff"
+    MIMETYPE "image/tiff"
+    IMAGEMODE "INT16"
+    EXTENSION "tif"
+  END 
+
+  WEB
+    METADATA
+      "wcs_enable_request"               "*"
+      "ows_enable_request"               "*"
+    
+      "wcs_inspire_capabilities"         "url"
+      "ows_inspire_metadataurl_href"     "https://catalog.example.org/link/to/metadata"
+      "ows_inspire_metadataurl_format"   "application/vnd.ogc.csw.capabilities.response_xml"      
+
+      "ows_inspire_dsid_code"            "wcsdemo"
+      "ows_title"                        "WCS BW-RP-SL DOP+DGM"
+      "ows_abstract"                     "Prototypische INSPIRE-Download-Umsetzung mit Mapserver"
+      "ows_languages"                    "ger"
+      "ows_keywordlist"                  "WCS_BW_RP_SL_DOP_DGM,Geobasisdaten,AdV,AdV-OWS-Basisprofil,AdV-WCS-Profil 1.0.0,SERVICE,DOP,Digitale Orthophotos,DGM,Digitale Geländemodelle,SL,Saarland,RP,Rheinland-Pfalz,BW,Baden-Württemberg"
+      "ows_contactorganization"          "wetransform GmbH"
+      "ows_service_onlineresource"       "https://www.wetransform.to"
+      "ows_contactperson"                "Florian Esser"
+      "ows_contactelectronicmailaddress" "fe+adv@wetransform.to"      
+      "ows_contactvoicetelephone"        "+49 6151 9876543-1"
+      "ows_contactfacsimiletelephone"    "+49 6151 9876543-2"
+      "ows_contactposition"              "Service Administrator"
+      "ows_address"                      "Fraunhoferstr. 5"
+      "ows_city"                         "Darmstadt"
+      "ows_stateorprovince"              "Hessen"
+      "ows_postcode"                     "64283"
+      "ows_country"                      "Deutschland"
+      "ows_fees"                         "None"
+      "wcs_accessconstraints"            "None"
+      "ows_hoursofservice"               "0900-1700"
+      "ows_contactinstructions"          "Do not contact - demo service"
+      "ows_role"                         "pointOfContact"
+    END
+  END
+
+  LAYER
+    NAME "sl_dop20_rgbi_2018"
+    STATUS ON
+    TYPE RASTER
+    DUMP TRUE
+    TILEINDEX "/data/sl_dop20_rgbi_2018.shp"
+    TILEITEM "LOCATION"
+    PROJECTION
+      "init=epsg:31466"
+    END
+
+    METADATA
+      "wcs:CoverageId"     "sl_dop20_rgbi_2018"
+      "wcs_enable_request" "GetCapabilities GetCoverage"
+      "wcs_label"          "Saarland DOP20"
+      "ows_srs"            "EPSG:31466 EPSG:4326"
+      "wcs_extent"         "2574000 5465999 2576000 5467999"
+      "wcs_resolution"     "1 1"
+      "wcs_bandcount"      "3"
+      "wcs_formats"        "GEOTIFF_RGB"
+      "wcs_native_format"  "image/tiff"
+    END
+  END
+  
+
+  LAYER
+    NAME "rp_dop40_rgbi"
+    STATUS ON
+    TYPE RASTER
+    DUMP TRUE
+    TILEINDEX "/data/rp_dop40_rgbi.shp"
+    TILEITEM "LOCATION"
+    PROJECTION
+      "init=epsg:25832"
+    END
+
+    METADATA
+      "wcs:CoverageId"     "rp_dop40_rgbi"
+      "wcs_enable_request" "GetCapabilities GetCoverage"
+      "wcs_label"          "Rheinland-Pfalz DOP40"
+      "ows_srs"            "EPSG:25832 EPSG:4326"
+      "wcs_extent"         "437500 5467000 437800 5467300"
+      "wcs_resolution"     "2 2"
+      "wcs_bandcount"      "3"
+      "wcs_formats"        "GEOTIFF_RGB"
+      "wcs_native_format"  "image/tiff"
+    END
+  END
+  
+
+  LAYER
+    NAME "rp_dop80_rgbi"
+    STATUS ON
+    TYPE RASTER
+    DUMP TRUE
+    TILEINDEX "/data/rp_dop80_rgbi.shp"
+    TILEITEM "LOCATION"
+    PROJECTION
+      "init=epsg:25832"
+    END
+
+    METADATA
+      "wcs:CoverageId"     "rp_dop80_rgbi"
+      "wcs_enable_request" "GetCapabilities GetCoverage"
+      "wcs_label"          "Rheinland-Pfalz DOP80"
+      "ows_srs"            "EPSG:25832 EPSG:4326"
+      "wcs_extent"         "437500 5467000 438100 5467600"
+      "wcs_resolution"     "2 2"
+      "wcs_bandcount"      "3"
+      "wcs_formats"        "GEOTIFF_RGB"
+      "wcs_native_format"  "image/tiff"
+    END
+  END
+  
+
+  LAYER
+    NAME "bw_dop10_rgbi"
+    STATUS ON
+    TYPE RASTER
+    DUMP TRUE
+    TILEINDEX "/data/bw_dop10_rgbi.shp"
+    TILEITEM "LOCATION"
+    PROJECTION
+      "init=epsg:25832"
+    END
+
+    METADATA
+      "wcs:CoverageId"     "bw_dop10_rgbi"
+      "wcs_enable_request" "GetCapabilities GetCoverage"
+      "wcs_label"          "Baden-Württemberg DOP10"
+      "ows_srs"            "EPSG:25832 EPSG:4326"
+      "wcs_extent"         "513000 5452800 513600 5453400"
+      "wcs_resolution"     "2 2"
+      "wcs_bandcount"      "3"
+      "wcs_formats"        "GEOTIFF_RGB"
+      "wcs_native_format"  "image/tiff"
+    END
+  END
+  
+
+  LAYER
+    NAME "rp_dop20_rgbi"
+    STATUS ON
+    TYPE RASTER
+    DUMP TRUE
+    TILEINDEX "/data/rp_dop20_rgbi.shp"
+    TILEITEM "LOCATION"
+    PROJECTION
+      "init=epsg:25832"
+    END
+
+    METADATA
+      "wcs:CoverageId"     "rp_dop20_rgbi"
+      "wcs_enable_request" "GetCapabilities GetCoverage"
+      "wcs_label"          "Rheinland-Pfalz DOP20"
+      "ows_srs"            "EPSG:25832 EPSG:4326"
+      "wcs_extent"         "437500 5467000 437650 5467150"
+      "wcs_resolution"     "2 2"
+      "wcs_bandcount"      "3"
+      "wcs_formats"        "GEOTIFF_RGB"
+      "wcs_native_format"  "image/tiff"
+    END
+  END
+  
+
+  LAYER
+    NAME "sl_dgm5"
+    STATUS ON
+    TYPE RASTER
+    DUMP TRUE
+    TILEINDEX "/data/sl_dgm5.shp"
+    TILEITEM "LOCATION"
+    PROJECTION
+      "init=epsg:31466"
+    END
+
+    METADATA
+      "wcs:CoverageId"     "sl_dgm5"
+      "wcs_enable_request" "GetCapabilities GetCoverage"
+      "wcs_label"          "Saarland DGM5"
+      "ows_srs"            "EPSG:31466 EPSG:4326"
+      "wcs_extent"         "2584000 5480000 2586000 5482000"
+      "wcs_resolution"     "5 5"
+      "wcs_bandcount"      "1"
+      "wcs_formats"        "GEOTIFF_INT16"
+      "wcs_native_format"  "image/tiff"
+    END
+  END
+  
+
+END
